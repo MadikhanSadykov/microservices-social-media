@@ -70,6 +70,9 @@ public class Profile implements Serializable, UserDetails {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(name = "is_admin")
+    private Boolean isAdmin = Boolean.FALSE;
+
     @Column(length = 512)
     private String bio;
 

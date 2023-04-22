@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface InterestRepository extends JpaRepository<Interest, Long> {
 
-    public List<Interest> findInterestsByProfiles(Profile profile);
+    List<Interest> findInterestsByProfilesUsername(String username);
 
 }

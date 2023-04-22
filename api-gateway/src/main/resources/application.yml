@@ -1,0 +1,52 @@
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+      discovery:
+        locator:
+          enabled: 'true'
+          lower-case-service-id: 'true'
+      routes[2]:
+        uri: lb://profile-ms
+        predicates[1]: Method=POST
+        id: profile-ms-login
+        predicates[0]: Path=/api/v1/login
+      routes[0]:
+        id: profile-ms-get-update-delete-post
+        filters[1]: RemoveRequestHeader=Cookie
+        predicates[0]: Path=/api/v1/profiles/**
+        filters[0]: AuthorizationHeaderFilter
+        predicates[1]: Method=GET,PUT,DELETE,POST
+        uri: lb://profile-ms
+      routes[1]:
+        id: profile-ms-register
+        predicates[1]: Method=POST
+        uri: lb://profile-ms
+        predicates[0]: Path=/api/v1/register
+      routes[3]:
+        id: profile-ms-interests-get-update-delete
+        filters[1]: RemoveRequestHeader=Cookie
+        predicates[0]: Path=/api/v1/interests/**
+        filters[0]: AuthorizationHeaderFilter
+        predicates[1]: Method=GET,PUT,DELETE,POST
+        uri: lb://profile-ms
+  main:
+    allow-bean-definition-overriding: 'true'
+  application:
+    name: api-gateway
+server:
+  port: '8080'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8081/eureka
+token:
+  secret: 8FF6841EC2DD8EA5B855B1C1EC3CA
+
