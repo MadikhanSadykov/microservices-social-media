@@ -1,5 +1,6 @@
 package com.madikhan.apigateway.filter;
 
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
@@ -14,6 +15,8 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+
+import java.util.Date;
 
 @RefreshScope
 @Component
@@ -61,17 +64,25 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
         return response.setComplete();
     }
 
-    private boolean isJwtValid(String jwt) {
+    private boolean isJwtValid(String stringJwt) {
         boolean returnValue = true;
 
         String subject = Jwts.parser()
                 .setSigningKey(environment.getProperty("token.secret"))
-                .parseClaimsJws(jwt)
+                .parseClaimsJws(stringJwt)
                 .getBody()
                 .getSubject();
 
         if (subject == null || subject.isEmpty()) {
             returnValue = false;
+        }
+
+        Date jwtDate = Jwts.parser()
+                .setSigningKey(environment.getProperty("token.secret"))
+                .parseClaimsJws(stringJwt).getBody().getExpiration();
+
+        if (jwtDate.before(new Date())) {
+            return false;
         }
 
         return returnValue;
