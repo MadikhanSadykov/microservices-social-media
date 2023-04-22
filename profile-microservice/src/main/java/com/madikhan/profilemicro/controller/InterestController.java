@@ -39,4 +39,36 @@ public class InterestController {
         return new ResponseEntity<>(interestRepository.findInterestsByProfilesUsername(username),HttpStatus.OK);
     }
 
+    @PostMapping("/{username}/add/interest")
+    public ResponseEntity<Profile> addInterestToProfile(@PathVariable("username") String username,
+                                                        @RequestBody Interest interest) {
+        Profile profile = profileRepository.findProfileByUsername(username);
+        profile.getInterests().add(interest);
+        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/add/interest/list")
+    public ResponseEntity<Profile> addInterestListToProfile(@PathVariable("username") String username,
+                                                            @RequestBody List<Interest> interests) {
+        Profile profile = profileRepository.findProfileByUsername(username);
+        profile.getInterests().addAll(interests);
+        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/remove/interest")
+    public ResponseEntity<Profile> removeInterestFromProfile(@PathVariable("username") String username,
+                                                             @RequestBody Interest interest) {
+        Profile profile = profileRepository.findProfileByUsername(username);
+        profile.getInterests().remove(interest);
+        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/remove/interest/list")
+    public ResponseEntity<Profile> removeInterestListToProfile(@PathVariable("username") String username,
+                                                               @RequestBody List<Interest> interests) {
+        Profile profile = profileRepository.findProfileByUsername(username);
+        profile.getInterests().removeAll(interests);
+        return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
+
 }
