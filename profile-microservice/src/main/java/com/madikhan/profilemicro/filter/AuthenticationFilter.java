@@ -3,7 +3,7 @@ package com.madikhan.profilemicro.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.model.request.LoginRequest;
-import com.madikhan.profilemicro.service.ProfileService;
+import com.madikhan.profilemicro.service.impl.ProfileServiceImpl;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.core.env.Environment;
@@ -25,11 +25,11 @@ import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final ProfileService profileService;
+    private final ProfileServiceImpl profileService;
     private final Environment environment;
 
     public AuthenticationFilter(AuthenticationManager authenticationManager,
-                                ProfileService profileService, Environment environment) {
+                                ProfileServiceImpl profileService, Environment environment) {
         super(authenticationManager);
         this.profileService = profileService;
         this.environment = environment;

@@ -44,6 +44,4 @@ public class ProfileDTO implements Serializable {
 
     private String bio;
 
-
-
 }
