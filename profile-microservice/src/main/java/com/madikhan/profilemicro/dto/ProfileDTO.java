@@ -30,10 +30,6 @@ public class ProfileDTO implements Serializable {
     @Email
     private String email;
 
-    @NotNull(message = "Password cannot be empty")
-    @Size(min = 8, max = 50, message = "Password must not be 8-50 long")
-    private String password;
-
     @NotNull(message = "First Name cannot be empty")
     @Size(min = 2, message = "First Name must not be less than 2 characters")
     private String firstName;

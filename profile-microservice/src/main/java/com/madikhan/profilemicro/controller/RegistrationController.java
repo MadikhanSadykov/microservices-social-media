@@ -25,8 +25,7 @@ public class RegistrationController {
 
     @PostMapping()
     public ResponseEntity<SaveProfileResponse> registerProfile(@Valid @RequestBody RegisterRequest registerRequest) {
-        ProfileDTO profileDTO = profileMapper.registerRequestToDTO(registerRequest);
-        profileDTO = profileService.save(profileDTO);
+        ProfileDTO profileDTO = profileService.register(registerRequest);
         SaveProfileResponse saveProfileResponse = profileMapper.dtoToSaveResponse(profileDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(saveProfileResponse);
