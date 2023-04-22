@@ -35,6 +35,10 @@ public class ProfileMapper {
         return modelMapper.map(profileDTO, Profile.class);
     }
 
+    public Profile registerRequestToProfile(RegisterRequest registerRequest) {
+        return modelMapper.map(registerRequest, Profile.class);
+    }
+
     public SaveProfileResponse dtoToSaveResponse(ProfileDTO profileDTO) {
         return modelMapper.map(profileDTO, SaveProfileResponse.class);
     }

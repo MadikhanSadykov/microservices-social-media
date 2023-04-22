@@ -3,6 +3,8 @@ package com.madikhan.profilemicro.service.impl;
 import com.madikhan.profilemicro.dto.ProfileDTO;
 import com.madikhan.profilemicro.mapper.ProfileMapper;
 import com.madikhan.profilemicro.model.entity.Profile;
+import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
+import com.madikhan.profilemicro.model.request.RegisterRequest;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +30,29 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     private final RestTemplate restTemplate;
     private final ProfileRepository profileRepository;
 
-    public ProfileDTO save(ProfileDTO profileDTO) {
+    public ProfileDTO register(RegisterRequest registerRequest) {
 
-        if (profileDTO.getUuid() == null) {
-            profileDTO.setUuid(UUID.randomUUID().toString());
+        Profile profile = profileMapper.registerRequestToProfile(registerRequest);
+        profile.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        profile.setUuid(UUID.randomUUID().toString());
+        profileRepository.save(profile);
+
+        return profileMapper.profileToDTO(profile);
+    }
+
+    public ProfileDTO update(ProfileUpdateRequest profileUpdateRequest) {
+        Long id = profileUpdateRequest.getId();
+        Optional<Profile> optionalProfile = profileRepository.findById(id);
+
+        if (optionalProfile.isEmpty()) {
+            throw new UsernameNotFoundException("Profile not found");
         }
 
-        profileDTO.setPassword(passwordEncoder.encode(profileDTO.getPassword()));
-
-        Profile profile = profileMapper.dtoToProfile(profileDTO);
+        Profile profile = optionalProfile.get();
+        profile.setFirstName(profileUpdateRequest.getFirstName());
+        profile.setLastName(profileUpdateRequest.getLastName());
+        profile.setBio(profileUpdateRequest.getBio());
+        profile.setUsername(profileUpdateRequest.getUsername());
         profileRepository.save(profile);
 
         return profileMapper.profileToDTO(profile);

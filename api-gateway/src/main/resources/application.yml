@@ -19,11 +19,11 @@ spring:
         id: profile-ms-login
         predicates[0]: Path=/api/v1/login
       routes[0]:
-        id: profile-ms-get-update-delete-post
+        id: profile-ms-get-update-delete-post-patch
         filters[1]: RemoveRequestHeader=Cookie
         predicates[0]: Path=/api/v1/profiles/**
         filters[0]: AuthorizationHeaderFilter
-        predicates[1]: Method=GET,PUT,DELETE,POST
+        predicates[1]: Method=GET,PUT,DELETE,POST,PATCH
         uri: lb://profile-ms
       routes[1]:
         id: profile-ms-register
