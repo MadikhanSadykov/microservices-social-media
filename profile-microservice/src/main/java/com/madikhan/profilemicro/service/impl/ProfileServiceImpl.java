@@ -30,6 +30,15 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     private final RestTemplate restTemplate;
     private final ProfileRepository profileRepository;
 
+    private List<ProfileDTO> getBySameInterests(String uuid) {
+        List<ProfileDTO> profilesWithSameInterests = new ArrayList<>();
+
+        List<Profile> profiles = profileRepository.findAll();
+
+
+        return profilesWithSameInterests;
+    }
+
     public ProfileDTO register(RegisterRequest registerRequest) {
 
         Profile profile = profileMapper.registerRequestToProfile(registerRequest);
