@@ -70,5 +70,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         response.addHeader("token", token);
         response.addHeader("uuid", profile.getUuid());
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(
+                "{\"" + "token" + "\":\"" + token + "\"}"
+        );
     }
 }
