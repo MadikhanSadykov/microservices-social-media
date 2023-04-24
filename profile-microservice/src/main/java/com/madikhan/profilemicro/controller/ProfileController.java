@@ -67,4 +67,22 @@ public class ProfileController {
         );
     }
 
+    @GetMapping("/{uuid}")
+    @ApiOperation("Get profile by uuid")
+    public ResponseEntity<ProfileDTO> getByUUid(@PathVariable(name = "uuid") String uuid) {
+        return new ResponseEntity<>(profileMapper
+                .profileToDTO(
+                        profileService.listByUuid(uuid)
+                ), HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}")
+    @ApiOperation("Get profile by username")
+    public ResponseEntity<ProfileDTO> getByUsername(@PathVariable(name = "username") String username) {
+        return new ResponseEntity<>(profileMapper
+                .profileToDTO(
+                        profileService.listByUsername(username)
+                ), HttpStatus.OK);
+    }
+
 }
