@@ -5,10 +5,12 @@ import lombok.Data;
 @Data
 public class ProfileUpdateRequest {
 
-    private Long id;
+    private String uuid;
     private String firstName;
     private String lastName;
     private String username;
     private String bio;
+    private String location;
+    private String gender;
 
 }
