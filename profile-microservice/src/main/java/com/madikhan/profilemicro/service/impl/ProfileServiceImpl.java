@@ -92,11 +92,27 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
             throw new UsernameNotFoundException("Profile not found");
         }
 
-        ProfileDTO profileDTO = profileMapper.profileToDTO(optionalProfile.get());
-        String postServiceURL = "";
-
-
         return profileRepository.findById(id).orElseGet(Profile::new);
+    }
+
+    public Profile listByUuid(String uuid) {
+        Profile optionalProfile = profileRepository.findProfileByUuid(uuid);
+
+        if (ObjectUtils.isEmpty(optionalProfile)) {
+            throw new UsernameNotFoundException("Profile not found");
+        }
+
+        return optionalProfile;
+    }
+
+    public Profile listByUsername(String username) {
+        Profile optionalProfile = profileRepository.findProfileByUsername(username);
+
+        if (ObjectUtils.isEmpty(optionalProfile)) {
+            throw new UsernameNotFoundException("Profile not found");
+        }
+
+        return optionalProfile;
     }
 
     public List<Profile> listAll() {
