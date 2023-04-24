@@ -24,6 +24,7 @@
         <module>profile-microservice</module>
         <module>post-microservice</module>
         <module>chat-microservice</module>
+        <module>image-microservice</module>
     </modules>
 
     <dependencyManagement>

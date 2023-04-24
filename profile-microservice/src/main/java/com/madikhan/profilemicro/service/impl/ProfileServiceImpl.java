@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -66,18 +67,19 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     public ProfileDTO update(ProfileUpdateRequest profileUpdateRequest) {
-        Long id = profileUpdateRequest.getId();
-        Optional<Profile> optionalProfile = profileRepository.findById(id);
+        String uuid = profileUpdateRequest.getUuid();
+        Profile profile = profileRepository.findProfileByUuid(uuid);
 
-        if (optionalProfile.isEmpty()) {
+        if (ObjectUtils.isEmpty(profile)) {
             throw new UsernameNotFoundException("Profile not found");
         }
 
-        Profile profile = optionalProfile.get();
         profile.setFirstName(profileUpdateRequest.getFirstName());
         profile.setLastName(profileUpdateRequest.getLastName());
         profile.setBio(profileUpdateRequest.getBio());
         profile.setUsername(profileUpdateRequest.getUsername());
+        profile.setLocation(profileUpdateRequest.getLocation());
+        profile.setGender(profileUpdateRequest.getGender());
         profileRepository.save(profile);
 
         return profileMapper.profileToDTO(profile);

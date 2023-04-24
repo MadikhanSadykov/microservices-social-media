@@ -10,5 +10,7 @@ public class SaveProfileResponse {
     private String firstName;
     private String lastName;
     private String uuid;
+    private String location;
+    private String gender;
 
 }
