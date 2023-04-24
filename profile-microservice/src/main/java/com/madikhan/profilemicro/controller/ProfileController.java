@@ -6,6 +6,8 @@ import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.impl.ProfileServiceImpl;
 import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -22,10 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/profiles")
 @RequiredArgsConstructor
+@Api("Profile microservice endpoint")
 public class ProfileController {
 
     private final Environment environment;
@@ -34,6 +38,7 @@ public class ProfileController {
     private final ProfileRepository profileRepository;
 
     @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Partial updating profile (username, firstName, lastName, bio)")
     public ProfileDTO updateProfile(@Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
         return profileService.update(profileUpdateRequest);
     }
@@ -68,9 +73,12 @@ public class ProfileController {
                 );
     }
 
-    @GetMapping("/message")
-    public ResponseEntity testMessage() {
-        return new ResponseEntity("Test message", HttpStatus.OK);
+    @GetMapping("/recommend/{username}")
+    public ResponseEntity<Map<Integer, ProfileDTO>> getRecommendationsByUsername(@PathVariable(name = "username") String username) {
+        return new ResponseEntity<>(
+                profileService.getProfilesSortedBySameInterests(username),
+                HttpStatus.OK
+        );
     }
 
 }

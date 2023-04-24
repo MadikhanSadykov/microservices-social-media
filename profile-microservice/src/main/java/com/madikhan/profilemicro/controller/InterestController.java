@@ -39,7 +39,7 @@ public class InterestController {
         return new ResponseEntity<>(interestRepository.findInterestsByProfilesUsername(username),HttpStatus.OK);
     }
 
-    @PostMapping("/{username}/add/interest")
+    @PostMapping("/{username}/add")
     public ResponseEntity<Profile> addInterestToProfile(@PathVariable("username") String username,
                                                         @RequestBody Interest interest) {
         Profile profile = profileRepository.findProfileByUsername(username);
@@ -47,7 +47,7 @@ public class InterestController {
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
 
-    @PostMapping("/{username}/add/interest/list")
+    @PostMapping("/{username}/add/list")
     public ResponseEntity<Profile> addInterestListToProfile(@PathVariable("username") String username,
                                                             @RequestBody List<Interest> interests) {
         Profile profile = profileRepository.findProfileByUsername(username);
@@ -55,7 +55,7 @@ public class InterestController {
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
 
-    @PostMapping("/{username}/remove/interest")
+    @PostMapping("/{username}/remove")
     public ResponseEntity<Profile> removeInterestFromProfile(@PathVariable("username") String username,
                                                              @RequestBody Interest interest) {
         Profile profile = profileRepository.findProfileByUsername(username);
@@ -63,7 +63,7 @@ public class InterestController {
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
 
-    @PostMapping("/{username}/remove/interest/list")
+    @PostMapping("/{username}/remove/list")
     public ResponseEntity<Profile> removeInterestListToProfile(@PathVariable("username") String username,
                                                                @RequestBody List<Interest> interests) {
         Profile profile = profileRepository.findProfileByUsername(username);

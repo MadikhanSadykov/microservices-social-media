@@ -1,14 +1,14 @@
 package com.madikhan.chatmicro.service.impl;
 
 import com.madikhan.chatmicro.model.ChatRoom;
-import com.madikhan.chatmicro.service.repository.ChatRoomRepository;
+import com.madikhan.chatmicro.repository.ChatRoomRepository;
 import com.madikhan.chatmicro.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ChatRoomServiceImpl implements ChatRoomService {
 
