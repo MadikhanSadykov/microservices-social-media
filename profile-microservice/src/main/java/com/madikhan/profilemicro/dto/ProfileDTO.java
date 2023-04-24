@@ -1,19 +1,24 @@
 package com.madikhan.profilemicro.dto;
 
+import com.madikhan.profilemicro.model.entity.Interest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"interests"})
 public class ProfileDTO implements Serializable {
 
     private static final long serialVersionUID = -2572028659694425971L;
@@ -39,5 +44,7 @@ public class ProfileDTO implements Serializable {
     private String lastName;
 
     private String bio;
+
+    private Set<Interest> interests = new HashSet<>();
 
 }

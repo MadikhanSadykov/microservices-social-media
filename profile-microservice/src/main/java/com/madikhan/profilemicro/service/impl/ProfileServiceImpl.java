@@ -2,11 +2,13 @@ package com.madikhan.profilemicro.service.impl;
 
 import com.madikhan.profilemicro.dto.ProfileDTO;
 import com.madikhan.profilemicro.mapper.ProfileMapper;
+import com.madikhan.profilemicro.model.entity.Interest;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.model.request.RegisterRequest;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.ProfileService;
+import com.madikhan.profilemicro.utils.DescendingIntegerComparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +19,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 
 @Component
@@ -30,13 +35,24 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     private final RestTemplate restTemplate;
     private final ProfileRepository profileRepository;
 
-    private List<ProfileDTO> getBySameInterests(String uuid) {
-        List<ProfileDTO> profilesWithSameInterests = new ArrayList<>();
+    public Map<Integer, ProfileDTO> getProfilesSortedBySameInterests(String username) {
+        Map<Integer, ProfileDTO> profileMatchingSortedMap = new TreeMap<>(new DescendingIntegerComparator());
 
         List<Profile> profiles = profileRepository.findAll();
+        Profile currentProfile = profileRepository.findProfileByUsername(username);
 
+        Iterator<Profile> profileIterator = profiles.iterator();
+        while (profileIterator.hasNext()) {
+            ProfileDTO profileDTO = profileMapper.profileToDTO(profileIterator.next());
 
-        return profilesWithSameInterests;
+            List<Interest> currentProfileInterest = new ArrayList<>(currentProfile.getInterests());
+            currentProfileInterest.retainAll(profileDTO.getInterests());
+
+            if (currentProfileInterest.size() > 0) {
+                profileMatchingSortedMap.put(currentProfileInterest.size(), profileDTO);
+            }
+        }
+        return profileMatchingSortedMap;
     }
 
     public ProfileDTO register(RegisterRequest registerRequest) {

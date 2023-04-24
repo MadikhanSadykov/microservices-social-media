@@ -3,20 +3,20 @@ package com.madikhan.chatmicro.service.impl;
 import com.madikhan.chatmicro.exception.MessageNotFoundException;
 import com.madikhan.chatmicro.model.ChatMessage;
 import com.madikhan.chatmicro.model.enums.MessageStatus;
-import com.madikhan.chatmicro.service.repository.ChatMessageRepository;
+import com.madikhan.chatmicro.repository.ChatMessageRepository;
 import com.madikhan.chatmicro.service.ChatMessageService;
 import com.madikhan.chatmicro.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
 

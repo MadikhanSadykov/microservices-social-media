@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -72,6 +73,12 @@ public class Profile implements Serializable, UserDetails {
 
     @Column(name = "is_admin")
     private Boolean isAdmin = Boolean.FALSE;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "location")
+    private String location;
 
     @Column(length = 512)
     private String bio;
