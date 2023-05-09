@@ -4,6 +4,7 @@ import com.madikhan.profilemicro.model.entity.Interest;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.repository.InterestRepository;
 import com.madikhan.profilemicro.repository.ProfileRepository;
+import com.mysql.cj.x.protobuf.Mysqlx;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.ws.rs.Path;
 import java.util.List;
 
 @RestController
@@ -79,6 +81,12 @@ public class InterestController {
         Profile profile = profileRepository.findProfileByUsername(username);
         profile.getInterests().removeAll(interests);
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/{username}/remove/all")
+    public ResponseEntity removeAllInterests(@PathVariable(name = "username") String username) {
+        interestRepository.deleteAll();
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
