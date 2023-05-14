@@ -4,20 +4,18 @@ import com.madikhan.chatmicro.model.ChatRoom;
 import com.madikhan.chatmicro.repository.ChatRoomRepository;
 import com.madikhan.chatmicro.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ChatRoomServiceImpl implements ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
 
     @Override
-    public Optional<String> getChatId(
-            String senderId, String recipientId, Boolean createIfNotExist) {
-
+    public Optional<String> getChatId(String senderId, String recipientId, boolean createIfNotExist) {
         return chatRoomRepository
                 .findBySenderIdAndRecipientId(senderId, recipientId)
                 .map(ChatRoom::getChatId)

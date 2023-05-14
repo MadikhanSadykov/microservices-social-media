@@ -1,39 +1,36 @@
 package com.madikhan.chatmicro.service.impl;
 
-import com.madikhan.chatmicro.exception.MessageNotFoundException;
+import com.madikhan.chatmicro.exception.ResourceNotFoundException;
 import com.madikhan.chatmicro.model.ChatMessage;
 import com.madikhan.chatmicro.model.enums.MessageStatus;
 import com.madikhan.chatmicro.repository.ChatMessageRepository;
+import com.madikhan.chatmicro.repository.ChatRoomRepository;
 import com.madikhan.chatmicro.service.ChatMessageService;
 import com.madikhan.chatmicro.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
 
     private final ChatMessageRepository repository;
     private final ChatRoomService chatRoomService;
-    private final MongoOperations mongoOperations;
 
     @Override
-    public ChatMessage findById(String id) {
-        return repository
-                .findById(id)
-                .map(chatMessage -> {
-                    chatMessage.setStatus(MessageStatus.DELIVERED);
-                    return repository.save(chatMessage);
-                })
-                .orElseThrow(() ->
-                        new MessageNotFoundException("Can't find message (" + id + ")"));
+    public ChatMessage save(ChatMessage chatMessage) {
+        chatMessage.setStatus(MessageStatus.RECEIVED);
+        repository.save(chatMessage);
+        return chatMessage;
+    }
+
+    @Override
+    public Long countNewMessages(String senderId, String recipientId) {
+        return repository.countBySenderIdAndRecipientIdAndStatus(
+                senderId, recipientId, MessageStatus.RECEIVED);
     }
 
     @Override
@@ -51,25 +48,20 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     }
 
     @Override
+    public ChatMessage findById(Long id) {
+        return repository
+                .findById(id)
+                .map(chatMessage -> {
+                    chatMessage.setStatus(MessageStatus.DELIVERED);
+                    return repository.save(chatMessage);
+                })
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("can't find message (" + id + ")"));
+    }
+
+    @Override
     public void updateStatuses(String senderId, String recipientId, MessageStatus status) {
-        Query query = new Query(
-                Criteria
-                        .where("senderId").is(senderId)
-                        .and("recipientId").is(recipientId));
-        Update update = Update.update("status", status);
-        mongoOperations.updateMulti(query, update, ChatMessage.class);
+        repository.updateStatusesBySenderIdAndRecipientId(senderId, recipientId, status);
     }
 
-    @Override
-    public ChatMessage save(ChatMessage chatMessage) {
-        chatMessage.setStatus(MessageStatus.RECEIVED);
-        repository.save(chatMessage);
-        return chatMessage;
-    }
-
-    @Override
-    public Long countNewMessages(String senderId, String recipientId) {
-        return repository.countBySenderIdAndRecipientIdAndStatus(
-                senderId, recipientId, MessageStatus.RECEIVED);
-    }
 }
