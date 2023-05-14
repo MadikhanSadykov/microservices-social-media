@@ -139,4 +139,10 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         return profileRepository.findProfileByEmail(email);
     }
 
+    public Profile removeAllInterestsByUsername(String username) {
+        Profile profile = profileRepository.findProfileByUsername(username);
+        profile.getInterests().clear();
+        return profileRepository.save(profile);
+    }
+
 }

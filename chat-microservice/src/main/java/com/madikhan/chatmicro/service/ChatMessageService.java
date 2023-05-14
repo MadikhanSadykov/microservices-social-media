@@ -9,14 +9,14 @@ import java.util.List;
 @Service
 public interface ChatMessageService {
 
-    ChatMessage findById(String id);
-
-    List<ChatMessage> findChatMessages(String senderId, String recipientId);
-
-    void updateStatuses(String senderId, String recipientId, MessageStatus status);
-
     ChatMessage save(ChatMessage chatMessage);
 
     Long countNewMessages(String senderId, String recipientId);
+
+    List<ChatMessage> findChatMessages(String senderId, String recipientId);
+
+    ChatMessage findById(Long id);
+
+    void updateStatuses(String senderId, String recipientId, MessageStatus status);
 
 }

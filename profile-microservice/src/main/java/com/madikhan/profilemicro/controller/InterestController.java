@@ -4,7 +4,8 @@ import com.madikhan.profilemicro.model.entity.Interest;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.repository.InterestRepository;
 import com.madikhan.profilemicro.repository.ProfileRepository;
-import com.mysql.cj.x.protobuf.Mysqlx;
+import com.madikhan.profilemicro.service.ProfileService;
+import com.madikhan.profilemicro.service.impl.ProfileServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class InterestController {
 
     private final InterestRepository interestRepository;
     private final ProfileRepository profileRepository;
+    private final ProfileServiceImpl profileService;
 
     @PostMapping("/save")
     @ApiOperation("Create new interest")
@@ -85,8 +87,9 @@ public class InterestController {
 
     @PostMapping("/{username}/remove/all")
     public ResponseEntity removeAllInterests(@PathVariable(name = "username") String username) {
-        interestRepository.deleteAll();
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(
+                profileService.removeAllInterestsByUsername(username),
+                HttpStatus.OK);
     }
 
 }
