@@ -14,7 +14,4 @@ public interface InterestRepository extends JpaRepository<Interest, Long> {
 
     List<Interest> findInterestsByProfilesUsername(String username);
 
-    @Modifying
-    @Query("delete from profile_interest pi where pi.")
-    void deleteAllByProfilesUsername(String username);
 }
