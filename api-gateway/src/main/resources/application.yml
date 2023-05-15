@@ -10,7 +10,6 @@ spring:
             allowCredentials: true
             allowedHeaders: "*"
             allowedMethods: "*"
-            allowedOrigins: "*"
       discovery:
         locator:
           enabled: 'true'
