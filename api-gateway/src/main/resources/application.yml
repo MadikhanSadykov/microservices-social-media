@@ -38,6 +38,10 @@ spring:
         filters[0]: AuthorizationHeaderFilter
         predicates[1]: Method=GET,PUT,DELETE,POST
         uri: lb://profile-ms
+      routes[4]:
+        id: profile-ms
+        uri: lb://profile-ms
+        predicates: Path=/profile/v2/api-docs
   main:
     allow-bean-definition-overriding: 'true'
   application:

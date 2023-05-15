@@ -21,7 +21,7 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
     private final ChatRoomService chatRoomService;
 
-    @MessageMapping("/chat")
+    @MessageMapping("/chat")  // /app/chat
     public void processMessage(@Payload ChatMessage chatMessage) {
         var chatId = chatRoomService
                 .getChatId(chatMessage.getSenderId(), chatMessage.getRecipientId(), true);

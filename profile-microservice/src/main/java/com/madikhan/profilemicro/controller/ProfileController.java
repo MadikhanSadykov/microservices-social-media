@@ -40,7 +40,7 @@ public class ProfileController {
         return profileService.update(profileUpdateRequest);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     @ApiOperation("Get profile by id")
     public ResponseEntity<ProfileDTO> getById(@PathVariable Long id) {
         return new ResponseEntity<>(profileMapper
@@ -67,7 +67,7 @@ public class ProfileController {
         );
     }
 
-    @GetMapping("/{uuid}")
+    @GetMapping("/uuid/{uuid}")
     @ApiOperation("Get profile by uuid")
     public ResponseEntity<ProfileDTO> getByUUid(@PathVariable(name = "uuid") String uuid) {
         return new ResponseEntity<>(profileMapper

@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -90,6 +89,30 @@ public class Profile implements Serializable, UserDetails {
             inverseJoinColumns = { @JoinColumn(name = "interest_id", referencedColumnName = "id") }
     )
     private Set<Interest> interests = new HashSet<>();
+
+    @ManyToMany()
+    @JoinTable(
+            name = "friendship",
+            joinColumns = { @JoinColumn(name = "profile_id") },
+            inverseJoinColumns = { @JoinColumn(name = "friend_id") }
+    )
+    private Set<Profile> friends = new HashSet<>();
+
+    @ManyToMany()
+    @JoinTable(
+            name = "friend_request",
+            joinColumns = { @JoinColumn(name = "from_id") },
+            inverseJoinColumns = { @JoinColumn(name = "to_id") }
+    )
+    private Set<Profile> requestFromMe = new HashSet<>();
+
+    @ManyToMany()
+    @JoinTable(
+            name = "friend_request",
+            joinColumns = { @JoinColumn(name = "to_id") },
+            inverseJoinColumns = { @JoinColumn(name = "from_id") }
+    )
+    private Set<Profile> requestToMe = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

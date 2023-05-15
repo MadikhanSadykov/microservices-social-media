@@ -145,4 +145,20 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         return profileRepository.save(profile);
     }
 
+    public Profile sendRequestToFriend(String senderUuid, String targetUuid) {
+        Profile senderProfile = profileRepository.findProfileByUuid(senderUuid);
+        Profile targetProfile = profileRepository.findProfileByUuid(targetUuid);
+        senderProfile.getRequestFromMe().add(targetProfile);
+        return profileRepository.save(senderProfile);
+    }
+
+    public Profile removeRequestToFriend(String senderUuid, String targetUuid) {
+        Profile senderProfile = profileRepository.findProfileByUuid(senderUuid);
+        Profile targetProfile = profileRepository.findProfileByUuid(targetUuid);
+        senderProfile.getRequestFromMe().remove(targetProfile);
+        return profileRepository.save(senderProfile);
+    }
+
+
+
 }
