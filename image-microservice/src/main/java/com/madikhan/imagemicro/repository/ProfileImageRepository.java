@@ -16,4 +16,8 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImage, Long
 
     Optional<ProfileImage> findProfileImageByUuidAndIsAvatarIsTrue(String uuid);
 
+    void deleteById(Long id);
+
+    Optional<List<ProfileImage>> findAllByUuid(String uuid);
+
 }

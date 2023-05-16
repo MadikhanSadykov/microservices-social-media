@@ -54,6 +54,11 @@ spring:
         id: chat-ms-rest
         uri: lb://chat-ms
         predicates: Path=/messages/**
+      routes[8]:
+        id: image-ms
+        uri: lb://image-ms
+        predicates[0]: Path=/api/v1/images/**
+        predicates[1]: Method=GET,PUT,DELETE,POST,PATCH
   main:
     allow-bean-definition-overriding: 'true'
   application:
