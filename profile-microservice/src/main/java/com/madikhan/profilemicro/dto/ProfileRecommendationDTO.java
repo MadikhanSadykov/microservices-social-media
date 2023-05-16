@@ -18,10 +18,10 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"interests"})
-public class ProfileDTO implements Serializable {
+@EqualsAndHashCode(exclude = {"interests", "sameInterests"})
+public class ProfileRecommendationDTO implements Serializable {
 
-    private static final long serialVersionUID = -2572028659694425971L;
+    private static final long serialVersionUID = -5397875335840894527L;
 
     private Long id;
 
@@ -50,5 +50,9 @@ public class ProfileDTO implements Serializable {
     private String gender;
 
     private Set<Interest> interests = new HashSet<>();
+
+    private Set<Interest> sameInterests = new HashSet<>();
+
+    private Integer numberOfSameInterests;
 
 }

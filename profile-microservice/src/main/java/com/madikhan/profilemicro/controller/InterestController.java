@@ -5,12 +5,12 @@ import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.repository.InterestRepository;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.ProfileService;
-import com.madikhan.profilemicro.service.impl.ProfileServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.ws.rs.Path;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/interests")
@@ -29,7 +29,7 @@ public class InterestController {
 
     private final InterestRepository interestRepository;
     private final ProfileRepository profileRepository;
-    private final ProfileServiceImpl profileService;
+    private final ProfileService profileService;
 
     @PostMapping("/save")
     @ApiOperation("Create new interest")
@@ -53,8 +53,14 @@ public class InterestController {
     @ApiOperation("Add one interest to profile")
     public ResponseEntity<Profile> addInterestToProfile(@PathVariable("username") String username,
                                                         @RequestBody Interest interest) {
-        Profile profile = profileRepository.findProfileByUsername(username);
+        Optional<Profile> profileOptional = profileRepository.findProfileByUsername(username);
+        if (profileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile not found with username: " + username);
+        }
+
+        Profile profile = profileOptional.get();
         profile.getInterests().add(interest);
+
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
 
@@ -62,8 +68,14 @@ public class InterestController {
     @ApiOperation("Add list of interests to profile")
     public ResponseEntity<Profile> addInterestListToProfile(@PathVariable("username") String username,
                                                             @RequestBody List<Interest> interests) {
-        Profile profile = profileRepository.findProfileByUsername(username);
+        Optional<Profile> profileOptional = profileRepository.findProfileByUsername(username);
+        if (profileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile not found with username: " + username);
+        }
+
+        Profile profile = profileOptional.get();
         profile.getInterests().addAll(interests);
+
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
 
@@ -71,7 +83,12 @@ public class InterestController {
     @ApiOperation("Remove one interest from profile")
     public ResponseEntity<Profile> removeInterestFromProfile(@PathVariable("username") String username,
                                                              @RequestBody Interest interest) {
-        Profile profile = profileRepository.findProfileByUsername(username);
+        Optional<Profile> profileOptional = profileRepository.findProfileByUsername(username);
+        if (profileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile not found with username: " + username);
+        }
+
+        Profile profile = profileOptional.get();
         profile.getInterests().remove(interest);
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }
@@ -80,7 +97,12 @@ public class InterestController {
     @ApiOperation("Remove list of interests from profile")
     public ResponseEntity<Profile> removeInterestListToProfile(@PathVariable("username") String username,
                                                                @RequestBody List<Interest> interests) {
-        Profile profile = profileRepository.findProfileByUsername(username);
+        Optional<Profile> profileOptional = profileRepository.findProfileByUsername(username);
+        if (profileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile not found with username: " + username);
+        }
+
+        Profile profile = profileOptional.get();
         profile.getInterests().removeAll(interests);
         return new ResponseEntity<>(profileRepository.save(profile), HttpStatus.OK);
     }

@@ -4,6 +4,7 @@ import com.madikhan.chatmicro.model.ChatMessage;
 import com.madikhan.chatmicro.model.ChatNotification;
 import com.madikhan.chatmicro.service.ChatMessageService;
 import com.madikhan.chatmicro.service.ChatRoomService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,9 +13,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 @Controller
+@RestController
 @RequiredArgsConstructor
+@Api("Chat microservice Endpoint")
 public class ChatController {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -30,10 +34,7 @@ public class ChatController {
         ChatMessage saved = chatMessageService.save(chatMessage);
         messagingTemplate.convertAndSendToUser(
                 chatMessage.getRecipientId(),"/queue/messages",
-                new ChatNotification(
-                        saved.getId(),
-                        saved.getSenderId(),
-                        saved.getSenderName()));
+                saved);
     }
 
     @GetMapping("/messages/{senderId}/{recipientId}/count")
