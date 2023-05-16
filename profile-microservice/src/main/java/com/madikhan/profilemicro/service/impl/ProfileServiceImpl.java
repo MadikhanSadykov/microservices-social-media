@@ -9,7 +9,6 @@ import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.model.request.RegisterRequest;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.ProfileService;
-import com.madikhan.profilemicro.utils.DescendingIntegerComparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,14 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.TreeMap;
 import java.util.UUID;
 
 @Component
@@ -37,6 +31,26 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final ProfileRepository profileRepository;
 
+    private List<Profile> getFirstAndSecondProfilesByUuids(String firstUuid, String secondUuid) 
+            throws UsernameNotFoundException {
+        Optional<Profile> firstProfileOptional = profileRepository.findProfileByUuid(firstUuid);
+        Optional<Profile> secondProfileOptional = profileRepository.findProfileByUuid(secondUuid);
+
+        if (firstProfileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile sender not found with uuid: " + firstUuid);
+        }
+
+        if (secondProfileOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Profile target not found with uuid: " + secondUuid);
+        }
+
+        List<Profile> profiles = new ArrayList<>();
+        profiles.add(0, firstProfileOptional.get());
+        profiles.add(1, secondProfileOptional.get());
+
+        return profiles;
+    }
+    
     @Override
     public List<ProfileRecommendationDTO> getProfilesRecommendationListBySameInterests(String username) {
         List<ProfileRecommendationDTO> profileRecommendationDTOList = new ArrayList<>();
@@ -82,7 +96,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public ProfileDTO update(ProfileUpdateRequest profileUpdateRequest) {
+    public ProfileDTO update(ProfileUpdateRequest profileUpdateRequest) throws UsernameNotFoundException {
         String uuid = profileUpdateRequest.getUuid();
         Optional<Profile> profileOptional = profileRepository.findProfileByUuid(uuid);
 
@@ -97,13 +111,14 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         profile.setUsername(profileUpdateRequest.getUsername());
         profile.setLocation(profileUpdateRequest.getLocation());
         profile.setGender(profileUpdateRequest.getGender());
+        profile.setAge(profileUpdateRequest.getAge());
         profileRepository.save(profile);
 
         return profileMapper.profileToDTO(profile);
     }
 
     @Override
-    public Profile listById(Long id) {
+    public Profile listById(Long id) throws UsernameNotFoundException {
         Optional<Profile> optionalProfile = profileRepository.findById(id);
 
         if (optionalProfile.isEmpty()) {
@@ -114,7 +129,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile listByUuid(String uuid) {
+    public Profile listByUuid(String uuid) throws UsernameNotFoundException {
         Optional<Profile> optionalProfile = profileRepository.findProfileByUuid(uuid);
 
         if (optionalProfile.isEmpty()) {
@@ -125,7 +140,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile listByUsername(String username) {
+    public Profile listByUsername(String username) throws UsernameNotFoundException {
         Optional<Profile> optionalProfile = profileRepository.findProfileByUsername(username);
 
         if (optionalProfile.isEmpty()) {
@@ -157,7 +172,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile getByEmail(String email) {
+    public Profile getByEmail(String email) throws UsernameNotFoundException {
         Optional<Profile> profileOptional = profileRepository.findProfileByEmail(email);
         if (profileOptional.isEmpty()) {
             throw new UsernameNotFoundException("Profile not found with email: " + email);
@@ -166,7 +181,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile removeAllInterestsByUsername(String username) {
+    public Profile removeAllInterestsByUsername(String username) throws UsernameNotFoundException {
         Optional<Profile> profileOptional = profileRepository.findProfileByUsername(username);
         if (profileOptional.isEmpty()) {
             throw new UsernameNotFoundException("Profile not found with username: " + username);
@@ -177,43 +192,70 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile sendRequestToFriend(String senderUuid, String targetUuid) {
-        Optional<Profile> senderProfileOptional = profileRepository.findProfileByUuid(senderUuid);
-        Optional<Profile> targetProfileOptional = profileRepository.findProfileByUuid(targetUuid);
+    public Profile sendRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
 
-        if (senderProfileOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Profile sender not found with uuid: " + senderUuid);
-        }
-
-        if (targetProfileOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Profile target not found with uuid: " + targetUuid);
-        }
-
-        Profile senderProfile = senderProfileOptional.get();
-        Profile targetProfile = targetProfileOptional.get();
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
 
         senderProfile.getRequestFromMe().add(targetProfile);
         return profileRepository.save(senderProfile);
     }
 
     @Override
-    public Profile removeRequestToFriend(String senderUuid, String targetUuid) {
-        Optional<Profile> senderProfileOptional = profileRepository.findProfileByUuid(senderUuid);
-        Optional<Profile> targetProfileOptional = profileRepository.findProfileByUuid(targetUuid);
+    public Profile removeRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
 
-        if (senderProfileOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Profile sender not found with uuid: " + senderUuid);
-        }
-
-        if (targetProfileOptional.isEmpty()) {
-            throw new UsernameNotFoundException("Profile target not found with uuid: " + targetUuid);
-        }
-
-        Profile senderProfile = senderProfileOptional.get();
-        Profile targetProfile = targetProfileOptional.get();
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
 
         senderProfile.getRequestFromMe().remove(targetProfile);
         return profileRepository.save(senderProfile);
+    }
+
+    @Override
+    public Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
+
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
+
+        senderProfile.getRequestFromMe().remove(targetProfile);
+        targetProfile.getRequestToMe().remove(targetProfile);
+
+        senderProfile.getFriends().add(targetProfile);
+        targetProfile.getFriends().add(senderProfile);
+
+        profileRepository.save(senderProfile);
+        return profileRepository.save(targetProfile);
+    }
+
+    @Override
+    public Profile removeFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
+
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
+
+        senderProfile.getFriends().remove(targetProfile);
+        targetProfile.getFriends().remove(senderProfile);
+
+        profileRepository.save(targetProfile);
+        return profileRepository.save(senderProfile);
+    }
+
+    @Override
+    public Boolean isProfileInFriends(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
+
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
+
+        if (senderProfile.getFriends().contains(targetProfile)) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
     }
 
 }

@@ -1,11 +1,14 @@
 package com.madikhan.profilemicro.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.madikhan.profilemicro.model.entity.Interest;
+import com.madikhan.profilemicro.model.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -18,7 +21,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"interests"})
+@EqualsAndHashCode(exclude = {"interests", "friends", "requestFromMe", "requestToMe"})
+@ToString(exclude = {"interests", "friends", "requestFromMe", "requestToMe"})
 public class ProfileDTO implements Serializable {
 
     private static final long serialVersionUID = -2572028659694425971L;
@@ -52,5 +56,14 @@ public class ProfileDTO implements Serializable {
     private Integer age;
 
     private Set<Interest> interests = new HashSet<>();
+
+    @JsonIgnore
+    private Set<Profile> friends = new HashSet<>();
+
+    @JsonIgnore
+    private Set<Profile> requestFromMe = new HashSet<>();
+
+    @JsonIgnore
+    private Set<Profile> requestToMe = new HashSet<>();
 
 }

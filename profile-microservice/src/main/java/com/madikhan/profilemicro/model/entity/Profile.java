@@ -32,8 +32,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"interests"})
-@ToString(exclude = {"interests"})
+@EqualsAndHashCode(exclude = {"interests", "friends", "requestFromMe", "requestToMe"})
+@ToString(exclude = {"interests", "friends", "requestFromMe", "requestToMe"})
 @Table(name = "profile")
 public class Profile implements Serializable, UserDetails {
 

@@ -1,6 +1,7 @@
 package com.madikhan.profilemicro.dto;
 
 import com.madikhan.profilemicro.model.entity.Interest;
+import com.madikhan.profilemicro.model.entity.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"interests", "sameInterests"})
+@EqualsAndHashCode(exclude = {"interests", "sameInterests", "friends", "requestFromMe", "requestToMe"})
 public class ProfileRecommendationDTO implements Serializable {
 
     private static final long serialVersionUID = -5397875335840894527L;
@@ -54,5 +55,11 @@ public class ProfileRecommendationDTO implements Serializable {
     private Set<Interest> sameInterests = new HashSet<>();
 
     private Integer numberOfSameInterests;
+
+    private Set<Profile> friends = new HashSet<>();
+
+    private Set<Profile> requestFromMe = new HashSet<>();
+
+    private Set<Profile> requestToMe = new HashSet<>();
 
 }

@@ -3,6 +3,7 @@ package com.madikhan.profilemicro.controller;
 import com.madikhan.profilemicro.dto.ProfileDTO;
 import com.madikhan.profilemicro.dto.ProfileRecommendationDTO;
 import com.madikhan.profilemicro.mapper.ProfileMapper;
+import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.service.ProfileService;
 import io.swagger.annotations.Api;
@@ -10,16 +11,15 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -32,9 +32,15 @@ public class ProfileController {
     private final ProfileMapper profileMapper;
     private final ProfileService profileService;
 
-    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation("Partial updating profile (username, firstName, lastName, bio, location, gender)")
-    public ProfileDTO updateProfile(@Valid @RequestBody ProfileUpdateRequest profileUpdateRequest) {
+    @PostMapping("/update")
+    @ApiOperation("Partial updating Post profile (username, firstName, lastName, bio, location, gender)")
+    public ProfileDTO updateProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest) {
+        return profileService.update(profileUpdateRequest);
+    }
+
+    @PatchMapping()
+    @ApiOperation("Partial updating Patch profile (username, firstName, lastName, bio, location, gender)")
+    public ProfileDTO updatePatchProfile(@RequestBody ProfileUpdateRequest profileUpdateRequest) {
         return profileService.update(profileUpdateRequest);
     }
 
@@ -85,12 +91,49 @@ public class ProfileController {
                 ), HttpStatus.OK);
     }
 
-//    @PostMapping("/send/{senderUuid}/to/{targetUuid}")
-//    @ApiOperation("Send request to friend")
-//    public ResponseEntity<?> sendRequestToFriend(
-//            @PathVariable(name = "senderUuid") String senderUuid,
-//            @PathVariable(name = "targetUuid") String targetUuid) {
-//
-//    }
+    @PostMapping("/send/{senderUuid}/to/{targetUuid}")
+    @ApiOperation("Send request to friend")
+    public ResponseEntity<?> sendRequestToFriend(
+            @PathVariable(name = "senderUuid") String senderUuid,
+            @PathVariable(name = "targetUuid") String targetUuid) {
+        Profile profile = profileService.sendRequestToFriend(senderUuid, targetUuid);
+        return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/accept/{senderUuid}/to/{accepterUuid}")
+    @ApiOperation("Accept request to friend")
+    public ResponseEntity<?> acceptRequestToFriend(
+            @PathVariable(name = "senderUuid") String senderUuid,
+            @PathVariable(name = "accepterUuid") String accepterUuid) {
+        Profile profile = profileService.acceptRequestToFriend(senderUuid, accepterUuid);
+        return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/remove/request/{senderUuid}/to/{targetUuid}")
+    @ApiOperation("Remove request to friend")
+    public ResponseEntity<?> removeRequestToFriend(
+            @PathVariable(name = "senderUuid") String senderUuid,
+            @PathVariable(name = "targetUuid") String targetUuid) {
+        Profile profile = profileService.removeRequestToFriend(senderUuid, targetUuid);
+        return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
+    }
+
+    @PostMapping("/remove/friend/{firstUuid}/to/{secondUuid}")
+    @ApiOperation("Remove request to friend")
+    public ResponseEntity<?> removeFriend(
+            @PathVariable(name = "firstUuid") String firstUuid,
+            @PathVariable(name = "secondUuid") String secondUuid) {
+        Profile profile = profileService.removeFriend(firstUuid, secondUuid);
+        return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
+    }
+
+    @GetMapping("/check/friend/{firstUuid}/{secondUuid}")
+    @ApiOperation("Check is profile in friends")
+    public ResponseEntity<?> isProfileInFriends(
+            @PathVariable(name = "firstUuid") String firstUuid,
+            @PathVariable(name = "secondUuid") String secondUuid) {
+        Boolean isFriends = profileService.isProfileInFriends(firstUuid, secondUuid);
+        return new ResponseEntity<>(isFriends, HttpStatus.OK);
+    }
 
 }
