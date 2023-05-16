@@ -45,4 +45,6 @@ public interface ProfileService {
 
     Boolean isProfileInFriends(String senderUuid, String targetUuid) throws UsernameNotFoundException;
 
+    Boolean isRequestToFriendSent(String senderUuid, String targetUuid) throws UsernameNotFoundException;
+
 }

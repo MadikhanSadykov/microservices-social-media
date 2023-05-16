@@ -1,7 +1,6 @@
 package com.madikhan.chatmicro.controller;
 
 import com.madikhan.chatmicro.model.ChatMessage;
-import com.madikhan.chatmicro.model.ChatNotification;
 import com.madikhan.chatmicro.service.ChatMessageService;
 import com.madikhan.chatmicro.service.ChatRoomService;
 import io.swagger.annotations.Api;

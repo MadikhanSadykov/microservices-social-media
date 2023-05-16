@@ -136,4 +136,27 @@ public class ProfileController {
         return new ResponseEntity<>(isFriends, HttpStatus.OK);
     }
 
+    @GetMapping("/check/request/{senderUuid}/{targetUuid}")
+    @ApiOperation("Check is profile sent request to friend")
+    public ResponseEntity<?> isProfileSentRequestToFriend(
+            @PathVariable(name = "senderUuid") String senderUuid,
+            @PathVariable(name = "targetUuid") String targetUuid) {
+        Boolean isFriends = profileService.isRequestToFriendSent(senderUuid, targetUuid);
+        return new ResponseEntity<>(isFriends, HttpStatus.OK);
+    }
+
+    @GetMapping("/requests/to/{uuid}")
+    @ApiOperation("Get List of profiles who sent request to me")
+    public ResponseEntity<?>  getProfilesSentRequestToMe(@PathVariable(name = "uuid") String uuid) {
+        Profile profile = profileService.listByUuid(uuid);
+        return new ResponseEntity<>(profile.getRequestToMe(), HttpStatus.OK);
+    }
+
+    @GetMapping("/requests/from/{uuid}")
+    @ApiOperation("Get List of profiles whom I sent request to friend")
+    public ResponseEntity<?>  getProfilesSentRequestFromMe(@PathVariable(name = "uuid") String uuid) {
+        Profile profile = profileService.listByUuid(uuid);
+        return new ResponseEntity<>(profile.getRequestFromMe(), HttpStatus.OK);
+    }
+
 }
