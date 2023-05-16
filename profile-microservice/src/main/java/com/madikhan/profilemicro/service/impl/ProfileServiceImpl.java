@@ -77,6 +77,10 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
             }
         }
 
+        ProfileRecommendationDTO currentProfile =
+                profileMapper.profileToProfileRecommendationDTO(currentProfileOptional.get());
+        profileRecommendationDTOList.remove(currentProfile);
+
         profileRecommendationDTOList
                 .sort((leftValue, rightValue) -> rightValue.getNumberOfSameInterests()
                         .compareTo(leftValue.getNumberOfSameInterests()));

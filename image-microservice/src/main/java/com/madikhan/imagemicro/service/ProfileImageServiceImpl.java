@@ -37,20 +37,29 @@ public class ProfileImageServiceImpl {
         return ImageUtils.decompressImage(avatar.get().getImageData());
     }
 
-    public List<byte[]> downloadProfileImagesByUuid(String uuid) {
+    public List<ProfileImage> downloadProfileImagesByUuid(String uuid) {
         Optional<List<ProfileImage>> optionalImages = profileImageRepository.findProfileImagesByUuid(uuid);
-        List<byte[]> images = new ArrayList<>();
-        if (optionalImages.get().isEmpty()) {
-            return images;
+
+        if (optionalImages.isEmpty()) {
+            return optionalImages.get();
         }
 
-        for (ProfileImage profileImage : optionalImages.get()) {
-            images.add(
-                    ImageUtils.decompressImage(profileImage.getImageData())
-            );
-        }
+        List<ProfileImage> images = optionalImages.get();
+//        for (ProfileImage profileImage : images) {
+//            images.(
+//                    ImageUtils.decompressImage(profileImage.getImageData())
+//            );
+//        }
 
         return images;
+    }
+
+    public void removeById(Long id) {
+        profileImageRepository.deleteById(id);
+    }
+
+    public List<ProfileImage> listByUuid(String uuid) {
+        return profileImageRepository.findAllByUuid(uuid).get();
     }
 
 }
