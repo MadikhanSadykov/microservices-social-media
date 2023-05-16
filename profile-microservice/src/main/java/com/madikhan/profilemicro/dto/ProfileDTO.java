@@ -49,6 +49,8 @@ public class ProfileDTO implements Serializable {
 
     private String gender;
 
+    private Integer age;
+
     private Set<Interest> interests = new HashSet<>();
 
 }

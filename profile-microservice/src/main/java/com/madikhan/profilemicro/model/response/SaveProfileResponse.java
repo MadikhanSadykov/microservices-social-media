@@ -12,5 +12,6 @@ public class SaveProfileResponse {
     private String uuid;
     private String location;
     private String gender;
+    private Integer age;
 
 }

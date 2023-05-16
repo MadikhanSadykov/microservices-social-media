@@ -76,6 +76,8 @@ public class Profile implements Serializable, UserDetails {
     @Column(name = "gender")
     private String gender;
 
+    private Integer age;
+
     @Column(name = "location")
     private String location;
 

@@ -12,5 +12,6 @@ public class ProfileUpdateRequest {
     private String bio;
     private String location;
     private String gender;
+    private Integer age;
 
 }
