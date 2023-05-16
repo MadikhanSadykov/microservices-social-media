@@ -198,7 +198,16 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         Profile senderProfile = profiles.get(0);
         Profile targetProfile = profiles.get(1);
 
-        senderProfile.getRequestFromMe().add(targetProfile);
+        if (senderProfile.getRequestToMe().contains(targetProfile)) {
+            senderProfile.getRequestToMe().remove(targetProfile);
+            targetProfile.getRequestFromMe().remove(senderProfile);
+            senderProfile.getFriends().add(targetProfile);
+            targetProfile.getFriends().add(senderProfile);
+            profileRepository.save(targetProfile);
+        } else {
+            senderProfile.getRequestFromMe().add(targetProfile);
+        }
+
         return profileRepository.save(senderProfile);
     }
 
@@ -257,5 +266,20 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
 
         return Boolean.FALSE;
     }
+
+    @Override
+    public Boolean isRequestToFriendSent(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
+
+        Profile senderProfile = profiles.get(0);
+        Profile targetProfile = profiles.get(1);
+
+        if (senderProfile.getRequestFromMe().contains(targetProfile)) {
+            return Boolean.TRUE;
+        }
+
+        return Boolean.FALSE;
+    }
+
 
 }

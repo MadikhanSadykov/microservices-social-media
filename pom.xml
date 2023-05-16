@@ -25,6 +25,7 @@
         <module>post-microservice</module>
         <module>chat-microservice</module>
         <module>image-microservice</module>
+        <module>notification-microservice</module>
     </modules>
 
     <dependencyManagement>
