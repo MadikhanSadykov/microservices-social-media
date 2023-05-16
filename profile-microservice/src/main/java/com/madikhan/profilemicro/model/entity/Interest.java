@@ -14,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +26,9 @@ import java.util.Set;
 @EqualsAndHashCode(exclude = {"profiles"})
 @ToString(exclude = {"profiles"})
 @Table(name = "interest")
-public class Interest {
+public class Interest implements Serializable {
+
+    private static final long serialVersionUID = -7023188275182986107L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

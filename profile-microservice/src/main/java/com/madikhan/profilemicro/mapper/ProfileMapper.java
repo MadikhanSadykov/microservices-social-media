@@ -1,6 +1,7 @@
 package com.madikhan.profilemicro.mapper;
 
 import com.madikhan.profilemicro.dto.ProfileDTO;
+import com.madikhan.profilemicro.dto.ProfileRecommendationDTO;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.model.request.RegisterRequest;
 import com.madikhan.profilemicro.model.response.SaveProfileResponse;
@@ -20,6 +21,10 @@ public class ProfileMapper {
 
     public ProfileDTO profileToDTO(Profile profile) {
         return modelMapper.map(profile, ProfileDTO.class);
+    }
+
+    public ProfileRecommendationDTO profileToProfileRecommendationDTO(Profile profile) {
+        return modelMapper.map(profile, ProfileRecommendationDTO.class);
     }
 
     public ProfileDTO registerRequestToDTO(RegisterRequest registerRequest) {
