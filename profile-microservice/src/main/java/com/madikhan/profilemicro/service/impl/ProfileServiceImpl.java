@@ -73,13 +73,11 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
             if (!currentProfileInterest.isEmpty()) {
                 profileRecommendationDTO.getSameInterests().addAll(currentProfileInterest);
                 profileRecommendationDTO.setNumberOfSameInterests(currentProfileInterest.size());
-                profileRecommendationDTOList.add(profileRecommendationDTO);
+                if (!profileRecommendationDTO.getUuid().equals(currentProfileOptional.get().getUuid())) {
+                    profileRecommendationDTOList.add(profileRecommendationDTO);
+                }
             }
         }
-
-        ProfileRecommendationDTO currentProfile =
-                profileMapper.profileToProfileRecommendationDTO(currentProfileOptional.get());
-        profileRecommendationDTOList.remove(currentProfile);
 
         profileRecommendationDTOList
                 .sort((leftValue, rightValue) -> rightValue.getNumberOfSameInterests()
@@ -284,6 +282,5 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
 
         return Boolean.FALSE;
     }
-
 
 }
