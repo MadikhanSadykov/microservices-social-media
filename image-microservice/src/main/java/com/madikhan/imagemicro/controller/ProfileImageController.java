@@ -2,10 +2,11 @@ package com.madikhan.imagemicro.controller;
 
 import com.madikhan.imagemicro.model.ProfileImage;
 import com.madikhan.imagemicro.service.ProfileImageServiceImpl;
+import com.mysql.cj.x.protobuf.Mysqlx;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/images")
@@ -27,6 +27,7 @@ public class ProfileImageController {
     private final ProfileImageServiceImpl profileImageService;
 
     @PostMapping("/{uuid}/add/avatar")
+    @ApiOperation("Add avatar by uuid")
     public ResponseEntity<?> addAvatar(@PathVariable(name = "uuid") String uuid,
                                       @RequestParam(name = "image") MultipartFile image) {
         try {
@@ -45,28 +46,43 @@ public class ProfileImageController {
 //                .body(profileImageService.downloadProfileImagesByUuid(uuid));
 //    }
 
-    @PostMapping("/remove/{id}")
-    public ResponseEntity<?> removeImage(@PathVariable(name = "id") Long id) {
-        profileImageService.removeById(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+//    @PostMapping("/remove/{id}")
+//    public ResponseEntity<?> removeImage(@PathVariable(name = "id") Long id) {
+//        profileImageService.removeById(id);
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
-    @PostMapping("/{uuid}/add")
-    public ResponseEntity<?> uploadImage(@PathVariable(name = "uuid") String uuid,
-                                         @RequestParam("image") MultipartFile image) {
-        try {
-            profileImageService.uploadProfileImage(image, uuid, Boolean.FALSE);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IOException e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
+//    @PostMapping("/{uuid}/add")
+//    public ResponseEntity<?> uploadImage(@PathVariable(name = "uuid") String uuid,
+//                                         @RequestParam("image") MultipartFile image) {
+//        try {
+//            profileImageService.uploadProfileImage(image, uuid, Boolean.FALSE);
+//            return new ResponseEntity<>(HttpStatus.OK);
+//        } catch (IOException e) {
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
-    @GetMapping("/{uuid}")
-    public ResponseEntity<List<ProfileImage>> getImagesByUuid(@PathVariable(name = "uuid") String uuid) {
+//    @GetMapping("/{uuid}")
+//    public ResponseEntity<List<ProfileImage>> getImagesByUuid(@PathVariable(name = "uuid") String uuid) {
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(profileImageService.listByUuid(uuid));
+//    }
+
+    @GetMapping("/avatar/{uuid}")
+    @ApiOperation("Get avatar by uuid")
+    public ResponseEntity<ProfileImage> getAvatarByUuid(@PathVariable(name = "uuid") String uuid) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(profileImageService.listByUuid(uuid));
+                .body(profileImageService.downloadProfileAvatarByUuid(uuid));
+    }
+
+    @PostMapping("/remove/avatar/{uuid}")
+    @ApiOperation("Delete avatar by uuid")
+    public ResponseEntity<?> removeAvatarByUuid(@PathVariable(name = "uuid") String uuid) {
+        profileImageService.removeAvatarByUuid(uuid);
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully removed");
     }
 
 }

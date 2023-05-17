@@ -18,6 +18,7 @@ public class SwaggerConfig implements SwaggerResourcesProvider {
         List resources = new ArrayList();
         resources.add(swaggerResource("profile-ms", "/profile/v2/api-docs", "2.0"));
         resources.add(swaggerResource("chat-ms", "/chat/v2/api-docs", "2.0"));
+        resources.add(swaggerResource("image-ms", "/image/v2/api-docs", "2.0"));
         return resources;
     }
 

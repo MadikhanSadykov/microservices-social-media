@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ProfileImageServiceImpl {
 
     private final ProfileImageRepository profileImageRepository;
@@ -29,33 +31,40 @@ public class ProfileImageServiceImpl {
         return "File uploaded successfully : " + profileImage.getName();
     }
 
-    public byte[] downloadProfileAvatarByUuid(String uuid) {
-        Optional<ProfileImage> avatar = profileImageRepository.findProfileImageByUuidAndIsAvatarIsTrue(uuid);
-        if (avatar.isEmpty()) {
-            return new byte[0];
+    public ProfileImage downloadProfileAvatarByUuid(String uuid) {
+        Optional<ProfileImage> avatarOptional = profileImageRepository.findProfileImageByUuidAndIsAvatarIsTrue(uuid);
+        if (avatarOptional.isEmpty()) {
+            return new ProfileImage();
         }
-        return ImageUtils.decompressImage(avatar.get().getImageData());
+        ProfileImage avatar = avatarOptional.get();
+        avatar.setImageData(
+                ImageUtils.decompressImage(avatar.getImageData()));
+        return avatar;
     }
 
-    public List<ProfileImage> downloadProfileImagesByUuid(String uuid) {
-        Optional<List<ProfileImage>> optionalImages = profileImageRepository.findProfileImagesByUuid(uuid);
-
-        if (optionalImages.isEmpty()) {
-            return optionalImages.get();
-        }
-
-        List<ProfileImage> images = optionalImages.get();
+//    public List<ProfileImage> downloadProfileImagesByUuid(String uuid) {
+//        Optional<List<ProfileImage>> optionalImages = profileImageRepository.findProfileImagesByUuid(uuid);
+//
+//        if (optionalImages.isEmpty()) {
+//            return optionalImages.get();
+//        }
+//
+//        List<ProfileImage> images = optionalImages.get();
 //        for (ProfileImage profileImage : images) {
 //            images.(
 //                    ImageUtils.decompressImage(profileImage.getImageData())
 //            );
 //        }
-
-        return images;
-    }
+//
+//        return images;
+//    }
 
     public void removeById(Long id) {
         profileImageRepository.deleteById(id);
+    }
+
+    public void removeAvatarByUuid(String uuid) {
+        profileImageRepository.deleteAvatarUuid(uuid);
     }
 
     public List<ProfileImage> listByUuid(String uuid) {
