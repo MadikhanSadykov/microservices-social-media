@@ -159,4 +159,10 @@ public class ProfileController {
         return new ResponseEntity<>(profile.getRequestFromMe(), HttpStatus.OK);
     }
 
+    @GetMapping("/friends/{uuid}")
+    @ApiOperation("Get list of my friends")
+    public ResponseEntity<?> getListOfMyFriends(@PathVariable(name = "uuid") String uuid) {
+        Profile profile = profileService.listByUuid(uuid);
+        return new ResponseEntity<>(profile.getFriends(), HttpStatus.OK);
+    }
 }
