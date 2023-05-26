@@ -50,6 +50,8 @@ public class ProfileRecommendationDTO implements Serializable {
 
     private String gender;
 
+    private Integer age;
+
     private Set<Interest> interests = new HashSet<>();
 
     private Set<Interest> sameInterests = new HashSet<>();

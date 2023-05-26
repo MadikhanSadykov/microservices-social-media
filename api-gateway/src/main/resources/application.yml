@@ -49,14 +49,17 @@ spring:
       routes[6]:
         id: chat-ms-websocket
         uri: lb://chat-ms
+        filters[0]: AuthorizationHeaderFilter
         predicates: Path=/ws/**
       routes[7]:
         id: chat-ms-rest
         uri: lb://chat-ms
+        filters[0]: AuthorizationHeaderFilter
         predicates: Path=/messages/**
       routes[8]:
         id: image-ms-rest
         uri: lb://image-ms
+        filters[0]: AuthorizationHeaderFilter
         predicates[0]: Path=/api/v1/images/**
         predicates[1]: Method=GET,PUT,DELETE,POST,PATCH
       routes[9]:
