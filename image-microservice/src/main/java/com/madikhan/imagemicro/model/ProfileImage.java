@@ -27,12 +27,13 @@ public class ProfileImage {
 
     private String name;
 
+    private String type;
+
     @Lob
     @Column(name = "image_data", length = 10000)
     private byte[] imageData;
 
+    @Column(unique = true)
     private String uuid;
-
-    private Boolean isAvatar = Boolean.FALSE;
 
 }

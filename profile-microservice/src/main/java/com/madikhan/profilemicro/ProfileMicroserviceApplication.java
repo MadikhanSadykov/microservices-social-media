@@ -38,4 +38,9 @@ public class ProfileMicroserviceApplication {
         return new RestTemplate();
     }
 
+//    @Bean
+//    public CollectorRegistry collectorRegistry() {
+//        return CollectorRegistry.defaultRegistry;
+//    }
+
 }
