@@ -82,6 +82,10 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
             }
         }
 
+
+        profileRecommendationDTOList.removeAll(currentProfileOptional.get().getFriends());
+
+
         profileRecommendationDTOList
                 .sort((leftValue, rightValue) -> rightValue.getNumberOfSameInterests()
                         .compareTo(leftValue.getNumberOfSameInterests()));
@@ -241,6 +245,17 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
+    public Profile rejectRequestToMe(String senderUuid, String myUuid) throws UsernameNotFoundException {
+        List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, myUuid);
+
+        Profile senderProfile = profiles.get(0);
+        Profile myProfile = profiles.get(1);
+
+        myProfile.getRequestToMe().remove(senderProfile);
+        return profileRepository.save(myProfile);
+    }
+
+    @Override
     public Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws Exception {
         List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
 
@@ -248,7 +263,10 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         Profile targetProfile = profiles.get(1);
 
         senderProfile.getRequestFromMe().remove(targetProfile);
-        targetProfile.getRequestToMe().remove(targetProfile);
+        senderProfile.getRequestToMe().remove(targetProfile);
+
+        targetProfile.getRequestToMe().remove(senderProfile);
+        targetProfile.getRequestFromMe().remove(senderProfile);
 
         senderProfile.getFriends().add(targetProfile);
         targetProfile.getFriends().add(senderProfile);

@@ -1,0 +1,22 @@
+server:
+  port: 0
+
+spring:
+  zipkin:
+    base-url: http://zipkin:9411
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql_db:3306/image?createDatabaseIfNotExist=true
+    username: root
+    password: root
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8081/eureka
+
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /image/v2/api-docs

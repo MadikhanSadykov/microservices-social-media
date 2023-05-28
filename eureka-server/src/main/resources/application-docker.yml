@@ -1,0 +1,6 @@
+server:
+  port: 8081
+
+spring:
+  zipkin:
+    base-url: http://zipkin.9411

@@ -1,0 +1,13 @@
+server:
+  port: 0
+
+spring:
+  zipkin:
+    base-url: http://zipkin:9411
+  kafka:
+    bootstrap-servers: broker:29092
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-server:8081/eureka

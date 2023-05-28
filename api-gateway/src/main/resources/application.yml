@@ -54,7 +54,6 @@ spring:
       routes[6]:
         id: chat-ms-websocket
         uri: lb://chat-ms
-        filters[0]: AuthorizationHeaderFilter
         predicates: Path=/ws/**
       routes[7]:
         id: chat-ms-rest
