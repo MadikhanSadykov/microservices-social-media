@@ -252,6 +252,12 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         Profile myProfile = profiles.get(1);
 
         myProfile.getRequestToMe().remove(senderProfile);
+        myProfile.getRequestFromMe().remove(senderProfile);
+
+        senderProfile.getRequestFromMe().remove(myProfile);
+        senderProfile.getRequestFromMe().remove(myProfile);
+
+        profileRepository.save(senderProfile);
         return profileRepository.save(myProfile);
     }
 
