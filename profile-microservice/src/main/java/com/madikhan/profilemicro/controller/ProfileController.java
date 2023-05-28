@@ -132,7 +132,7 @@ public class ProfileController {
     public ResponseEntity<?> rejectRequestToFriend(
             @PathVariable(name = "senderUuid") String senderUuid,
             @PathVariable(name = "myUuid") String myUuid) {
-        Profile profile = profileService.removeFriend(senderUuid, myUuid);
+        Profile profile = profileService.rejectRequestToMe(senderUuid, myUuid);
         return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
     }
 
