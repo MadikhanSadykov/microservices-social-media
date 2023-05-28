@@ -31,8 +31,10 @@ public class ChatController {
         chatMessage.setChatId(chatId.get());
 
         ChatMessage saved = chatMessageService.save(chatMessage);
+        // /user/{uuid}/queue/messages
         messagingTemplate.convertAndSendToUser(
-                chatMessage.getRecipientId(),"/queue/messages",
+                chatMessage.getRecipientId(),
+                "/queue/messages",
                 saved);
     }
 

@@ -1,4 +1,4 @@
-package com.madikhan.imagemicro.config;
+package com.madikhan.notification.config;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static springfox.documentation.RequestHandler.byPatternsCondition;
+
 
 @Configuration
 public class SpringFoxConfig {
@@ -58,5 +59,6 @@ public class SpringFoxConfig {
         String[] patterns = info.getPathPatternsCondition().getPatternValues().toArray(String[]::new);
         return info.mutate().options(new RequestMappingInfo.BuilderConfiguration()).paths(patterns).build();
     }
+
 
 }

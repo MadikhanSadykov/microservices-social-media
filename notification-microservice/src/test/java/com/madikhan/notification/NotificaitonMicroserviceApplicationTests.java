@@ -1,4 +1,4 @@
-package com.madikhan.notificaiton;
+package com.madikhan.notification;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

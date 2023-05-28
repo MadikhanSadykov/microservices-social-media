@@ -1,5 +1,6 @@
 package com.madikhan.profilemicro.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.madikhan.profilemicro.dto.ProfileDTO;
 import com.madikhan.profilemicro.dto.ProfileRecommendationDTO;
 import com.madikhan.profilemicro.model.entity.Profile;
@@ -13,6 +14,16 @@ import java.util.List;
 
 @Service
 public interface ProfileService {
+
+    static final ObjectMapper mapper = new ObjectMapper();
+
+    default <T> String toJson(T object) throws Exception {
+        try {
+            return mapper.writeValueAsString(object);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 
     List<ProfileRecommendationDTO> getProfilesRecommendationListBySameInterests(String username)
             throws UsernameNotFoundException;
@@ -35,11 +46,11 @@ public interface ProfileService {
 
     Profile removeAllInterestsByUsername(String username) throws UsernameNotFoundException;
 
-    Profile sendRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException;
+    Profile sendRequestToFriend(String senderUuid, String targetUuid) throws Exception;
 
     Profile removeRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException;
 
-    Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException;
+    Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws Exception;
 
     Profile removeFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException;
 

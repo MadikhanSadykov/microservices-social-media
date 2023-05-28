@@ -6,10 +6,10 @@ import com.madikhan.profilemicro.mapper.ProfileMapper;
 import com.madikhan.profilemicro.model.entity.Profile;
 import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.service.ProfileService;
+import io.micrometer.core.annotation.Timed;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +28,6 @@ import java.util.List;
 @Api("Profile microservice endpoint")
 public class ProfileController {
 
-    private final Environment environment;
     private final ProfileMapper profileMapper;
     private final ProfileService profileService;
 
@@ -84,6 +83,7 @@ public class ProfileController {
 
     @GetMapping("/{username}")
     @ApiOperation("Get profile by username")
+    @Timed(value = "getByUsername.time", description = "Time taken to return Profile by username")
     public ResponseEntity<ProfileDTO> getByUsername(@PathVariable(name = "username") String username) {
         return new ResponseEntity<>(profileMapper
                 .profileToDTO(
@@ -95,7 +95,7 @@ public class ProfileController {
     @ApiOperation("Send request to friend")
     public ResponseEntity<?> sendRequestToFriend(
             @PathVariable(name = "senderUuid") String senderUuid,
-            @PathVariable(name = "targetUuid") String targetUuid) {
+            @PathVariable(name = "targetUuid") String targetUuid) throws Exception {
         Profile profile = profileService.sendRequestToFriend(senderUuid, targetUuid);
         return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
     }
@@ -104,7 +104,7 @@ public class ProfileController {
     @ApiOperation("Accept request to friend")
     public ResponseEntity<?> acceptRequestToFriend(
             @PathVariable(name = "senderUuid") String senderUuid,
-            @PathVariable(name = "accepterUuid") String accepterUuid) {
+            @PathVariable(name = "accepterUuid") String accepterUuid) throws Exception {
         Profile profile = profileService.acceptRequestToFriend(senderUuid, accepterUuid);
         return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
     }
@@ -119,7 +119,7 @@ public class ProfileController {
     }
 
     @PostMapping("/remove/friend/{firstUuid}/to/{secondUuid}")
-    @ApiOperation("Remove request to friend")
+    @ApiOperation("Delete friend")
     public ResponseEntity<?> removeFriend(
             @PathVariable(name = "firstUuid") String firstUuid,
             @PathVariable(name = "secondUuid") String secondUuid) {
