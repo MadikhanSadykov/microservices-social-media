@@ -127,6 +127,15 @@ public class ProfileController {
         return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
     }
 
+    @PostMapping("/reject/request/{senderUuid}/to/{myUuid}")
+    @ApiOperation("Reject Request to friend")
+    public ResponseEntity<?> rejectRequestToFriend(
+            @PathVariable(name = "senderUuid") String senderUuid,
+            @PathVariable(name = "myUuid") String myUuid) {
+        Profile profile = profileService.removeFriend(senderUuid, myUuid);
+        return new ResponseEntity<>(profileMapper.profileToDTO(profile), HttpStatus.OK);
+    }
+
     @GetMapping("/check/friend/{firstUuid}/{secondUuid}")
     @ApiOperation("Check is profile in friends")
     public ResponseEntity<?> isProfileInFriends(

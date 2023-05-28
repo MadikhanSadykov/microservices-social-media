@@ -31,6 +31,7 @@ services:
   mysql_db:
     image: "mysql:8.0"
     restart: always
+    container_name: mysql_db
     ports:
       - "3306:3306"
     environment:
@@ -66,14 +67,23 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=password
 
 
+  ## Zipkin
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
   ## Eureka Server
   discovery-server:
     image: madikhansadykov/eureka-server:latest
-    container_name: eureka-server
+    container_name: discovery-server
     ports:
       - "8081:8081"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - zipkin
 
 
   # Api gateway
@@ -88,6 +98,7 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY= TRACE
     depends_on:
+      - zipkin
       - discovery-server
 
 
@@ -97,8 +108,10 @@ services:
     image: madikhansadykov/profile-microservice:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/prof?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/prof?createDatabaseIfNotExist=true
     depends_on:
+      - zipkin
+      - broker
       - mysql_db
       - discovery-server
       - api-gateway
@@ -110,8 +123,10 @@ services:
     image: madikhansadykov/chat-microservice:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/chat?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/chat?createDatabaseIfNotExist=true
     depends_on:
+      - zipkin
+      - broker
       - mysql_db
       - discovery-server
       - api-gateway
@@ -123,9 +138,22 @@ services:
     image: madikhansadykov/image-microservice:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/image?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/image?createDatabaseIfNotExist=true
     depends_on:
       - mysql_db
+      - discovery-server
+      - api-gateway
+
+
+  ## Notification-Microservice Docker Compose Config
+  notification-ms:
+    container_name: notification
+    image: madikhansadykov/notification:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - mysql_db
+      - zipkin
       - discovery-server
       - api-gateway
 

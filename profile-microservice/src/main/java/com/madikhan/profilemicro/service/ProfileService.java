@@ -58,4 +58,6 @@ public interface ProfileService {
 
     Boolean isRequestToFriendSent(String senderUuid, String targetUuid) throws UsernameNotFoundException;
 
+    Profile rejectRequestToMe(String senderUuid, String myUuid) throws UsernameNotFoundException;
+
 }
