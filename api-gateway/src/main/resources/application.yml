@@ -1,4 +1,9 @@
 spring:
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1.0
   cloud:
     gateway:
       default-filters:
@@ -66,6 +71,11 @@ spring:
         id: image-ms
         uri: lb://image-ms
         predicates: Path=/image/v2/api-docs
+      routes[10]:
+        id: notification-ms-websocket
+        uri: lb://notification-ms
+#        filters[0]: AuthorizationHeaderFilter
+        predicates: Path=/notification/**
   main:
     allow-bean-definition-overriding: 'true'
   application:
@@ -78,4 +88,19 @@ eureka:
       defaultZone: http://localhost:8081/eureka
 token:
   secret: 8FF6841EC2DD8EA5B855B1C1EC3CA
+
+management:
+  endpoints:
+    health:
+      show-details: always
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
 

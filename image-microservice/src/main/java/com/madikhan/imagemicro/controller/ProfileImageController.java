@@ -1,6 +1,5 @@
 package com.madikhan.imagemicro.controller;
 
-import com.madikhan.imagemicro.model.ProfileImage;
 import com.madikhan.imagemicro.service.ProfileImageServiceImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

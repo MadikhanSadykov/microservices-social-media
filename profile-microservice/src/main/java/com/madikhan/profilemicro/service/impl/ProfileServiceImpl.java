@@ -5,11 +5,13 @@ import com.madikhan.profilemicro.dto.ProfileRecommendationDTO;
 import com.madikhan.profilemicro.mapper.ProfileMapper;
 import com.madikhan.profilemicro.model.entity.Interest;
 import com.madikhan.profilemicro.model.entity.Profile;
+import com.madikhan.profilemicro.model.event.Notification;
 import com.madikhan.profilemicro.model.request.ProfileUpdateRequest;
 import com.madikhan.profilemicro.model.request.RegisterRequest;
 import com.madikhan.profilemicro.repository.ProfileRepository;
 import com.madikhan.profilemicro.service.ProfileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +32,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     private final ProfileMapper profileMapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final ProfileRepository profileRepository;
+    private final KafkaTemplate<String, Notification> kafkaTemplate;
 
     private List<Profile> getFirstAndSecondProfilesByUuids(String firstUuid, String secondUuid) 
             throws UsernameNotFoundException {
@@ -194,7 +197,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile sendRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+    public Profile sendRequestToFriend(String senderUuid, String targetUuid) throws Exception {
         List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
 
         Profile senderProfile = profiles.get(0);
@@ -209,6 +212,19 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         } else {
             senderProfile.getRequestFromMe().add(targetProfile);
         }
+
+        Notification notification = Notification
+                .builder()
+                .id(senderUuid + "_" + targetUuid)
+                .content("New Request To Friend from: " + senderProfile.getUsername())
+                .senderUuid(senderUuid)
+                .senderUsername(senderProfile.getUsername())
+                .targetUuid(targetUuid)
+                .targetUsername(targetProfile.getUsername())
+                .build();
+
+        // send notification to kafka server
+        kafkaTemplate.send("notificationTopic", notification);
 
         return profileRepository.save(senderProfile);
     }
@@ -225,7 +241,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
     }
 
     @Override
-    public Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws UsernameNotFoundException {
+    public Profile acceptRequestToFriend(String senderUuid, String targetUuid) throws Exception {
         List<Profile> profiles = getFirstAndSecondProfilesByUuids(senderUuid, targetUuid);
 
         Profile senderProfile = profiles.get(0);
@@ -238,6 +254,20 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         targetProfile.getFriends().add(senderProfile);
 
         profileRepository.save(senderProfile);
+
+        Notification notification = Notification
+                .builder()
+                .id(senderUuid + "_" + targetUuid)
+                .content("New Request To Friend from: " + senderProfile.getUsername())
+                .senderUuid(senderUuid)
+                .senderUsername(senderProfile.getUsername())
+                .targetUuid(targetUuid)
+                .targetUsername(targetProfile.getUsername())
+                .build();
+
+        // send notification to kafka server
+        kafkaTemplate.send("notificationTopic", notification);
+
         return profileRepository.save(targetProfile);
     }
 

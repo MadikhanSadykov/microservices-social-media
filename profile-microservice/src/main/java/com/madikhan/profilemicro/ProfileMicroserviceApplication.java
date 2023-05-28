@@ -1,5 +1,8 @@
 package com.madikhan.profilemicro;
 
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.prometheus.client.CollectorRegistry;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,9 +41,14 @@ public class ProfileMicroserviceApplication {
         return new RestTemplate();
     }
 
-//    @Bean
-//    public CollectorRegistry collectorRegistry() {
-//        return CollectorRegistry.defaultRegistry;
-//    }
+    @Bean
+    public CollectorRegistry collectorRegistry() {
+        return CollectorRegistry.defaultRegistry;
+    }
+
+    @Bean
+    public TimedAspect timedAspect(MeterRegistry meterRegistry) {
+        return new TimedAspect(meterRegistry);
+    }
 
 }
