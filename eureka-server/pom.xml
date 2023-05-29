@@ -86,29 +86,6 @@
                 <version>${spring.boot.maven.plugin.version}</version>
             </plugin>
 
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-enforcer-plugin</artifactId>-->
-<!--                <version>3.2.1</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>enforce-banned-dependencies</id>-->
-<!--                        <goals>-->
-<!--                            <goal>enforce</goal>-->
-<!--                        </goals>-->
-<!--                        <configuration>-->
-<!--                            <rules>-->
-<!--                                <bannedDependencies>-->
-<!--                                    <excludes>-->
-<!--                                        <exclude>*:servlet-api:2.5</exclude>-->
-<!--                                    </excludes>-->
-<!--                                </bannedDependencies>-->
-<!--                            </rules>-->
-<!--                            <fail>true</fail>-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

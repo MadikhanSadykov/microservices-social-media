@@ -67,8 +67,14 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
 
         Iterator<Profile> profileIterator = profiles.iterator();
         while (profileIterator.hasNext()) {
+            Profile profile = profileIterator.next();
+
+            if (currentProfileOptional.get().getFriends().contains(profile)) {
+                continue;
+            }
+
             ProfileRecommendationDTO profileRecommendationDTO = profileMapper
-                    .profileToProfileRecommendationDTO(profileIterator.next());
+                    .profileToProfileRecommendationDTO(profile);
 
             List<Interest> currentProfileInterest = new ArrayList<>(currentProfileOptional.get().getInterests());
             currentProfileInterest.retainAll(profileRecommendationDTO.getInterests());
@@ -80,11 +86,8 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
                     profileRecommendationDTOList.add(profileRecommendationDTO);
                 }
             }
+
         }
-
-
-        profileRecommendationDTOList.removeAll(currentProfileOptional.get().getFriends());
-
 
         profileRecommendationDTOList
                 .sort((leftValue, rightValue) -> rightValue.getNumberOfSameInterests()
@@ -282,7 +285,7 @@ public class ProfileServiceImpl implements UserDetailsService, ProfileService {
         Notification notification = Notification
                 .builder()
                 .id(senderUuid + "_" + targetUuid)
-                .content("New Request To Friend from: " + senderProfile.getUsername())
+                .content("You have matched profiles with: " + senderProfile.getUsername())
                 .senderUuid(senderUuid)
                 .senderUsername(senderProfile.getUsername())
                 .targetUuid(targetUuid)

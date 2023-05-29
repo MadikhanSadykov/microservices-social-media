@@ -1,4 +1,16 @@
 version: '3.8'
+
+networks:
+  hfnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 127.0.0.1/24
+          gateway: 127.0.0.1
+
+
+
 services:
 
   # ZOOKEPER is used to Orchestrate the Apache Kafka Clusters
@@ -36,7 +48,6 @@ services:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: db
-      MYSQL_USER: root
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
 
@@ -104,6 +115,9 @@ services:
 
   ## Profile-Microservice Docker Compose Config
   profile-ms:
+    networks:
+      hfnet:
+        ipv4_address: 127.0.0.1
     container_name: profile-ms
     image: madikhansadykov/profile-microservice:latest
     environment:
